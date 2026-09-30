@@ -29,10 +29,20 @@ public class ReviewController {
 
     private final ReviewUploadService uploadService;
     private final ReviewQueryService queryService;
+    private final ReviewCollectService collectService;
 
-    public ReviewController(ReviewUploadService uploadService, ReviewQueryService queryService) {
+    public ReviewController(ReviewUploadService uploadService, ReviewQueryService queryService,
+                            ReviewCollectService collectService) {
         this.uploadService = uploadService;
         this.queryService = queryService;
+        this.collectService = collectService;
+    }
+
+    @Operation(summary = "네이버 플레이스 리뷰 수집 요청 (비동기, GET /jobs/{jobId} 로 상태 확인)")
+    @PostMapping("/review-collections")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public ApiResponse<ReviewDtos.CollectAccepted> collect(@CurrentOwner Long ownerId, @PathVariable Long storeId) {
+        return ApiResponse.ok(collectService.request(ownerId, storeId));
     }
 
     @Operation(summary = "리뷰 파일 등록 (CSV: writtenAt, content, visitedAt, rating, author)")

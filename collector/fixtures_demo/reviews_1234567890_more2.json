@@ -1,0 +1,141 @@
+[
+ {
+  "data": {
+   "visitorReviews": {
+    "items": [
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0020",
+      "body": "[가상] 제육볶음 양이 많아요",
+      "rating": null,
+      "created": "8.22.토",
+      "visited": "8.22.토",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a2",
+       "nickname": "가상손님2"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0021",
+      "body": "[가상] 음식이 빨리 나와요",
+      "rating": null,
+      "created": "8.19.수",
+      "visited": "8.18.화",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a3",
+       "nickname": "가상손님3"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0022",
+      "body": "[가상] 매장이 깨끗해요",
+      "rating": null,
+      "created": "8.17.월",
+      "visited": "8.16.일",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a4",
+       "nickname": "가상손님4"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0023",
+      "body": "[가상] 제육볶음 양이 많아요",
+      "rating": null,
+      "created": "8.15.토",
+      "visited": "8.15.토",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a5",
+       "nickname": "가상손님5"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0024",
+      "body": "[가상] 직원분들이 친절해요",
+      "rating": null,
+      "created": "8.12.수",
+      "visited": "8.11.화",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a6",
+       "nickname": "가상손님6"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0025",
+      "body": "[가상] 매장이 깨끗해요",
+      "rating": null,
+      "created": "8.10.월",
+      "visited": "8.10.월",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a7",
+       "nickname": "가상손님7"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0026",
+      "body": "[가상] 제육볶음 양이 많아요",
+      "rating": null,
+      "created": "8.8.토",
+      "visited": "8.8.토",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a8",
+       "nickname": "가상손님8"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0027",
+      "body": "[가상] 된장찌개 집밥 느낌 좋아요",
+      "rating": null,
+      "created": "8.5.수",
+      "visited": "8.4.화",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a0",
+       "nickname": "가상손님0"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0028",
+      "body": "[가상] 갈비탕 추천합니다",
+      "rating": null,
+      "created": "8.2.일",
+      "visited": "8.1.토",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a1",
+       "nickname": "가상손님1"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0029",
+      "body": "[가상] 제육볶음 양이 많아요",
+      "rating": null,
+      "created": "7.31.금",
+      "visited": "7.30.목",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a2",
+       "nickname": "가상손님2"
+      }
+     }
+    ],
+    "total": 40
+   }
+  }
+ }
+]

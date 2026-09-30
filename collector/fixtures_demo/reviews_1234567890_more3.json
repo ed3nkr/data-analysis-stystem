@@ -1,0 +1,141 @@
+[
+ {
+  "data": {
+   "visitorReviews": {
+    "items": [
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0030",
+      "body": "[가상] 매장이 깨끗해요",
+      "rating": null,
+      "created": "7.30.목",
+      "visited": "7.29.수",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a3",
+       "nickname": "가상손님3"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0031",
+      "body": "[가상] 김치찌개 국물이 진하고 맛있어요",
+      "rating": null,
+      "created": "7.27.월",
+      "visited": "7.27.월",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a4",
+       "nickname": "가상손님4"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0032",
+      "body": "[가상] 갈비탕 추천합니다",
+      "rating": null,
+      "created": "7.24.금",
+      "visited": "7.23.목",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a5",
+       "nickname": "가상손님5"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0033",
+      "body": "[가상] 웨이팅이 길었어요",
+      "rating": null,
+      "created": "7.21.화",
+      "visited": "7.20.월",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a6",
+       "nickname": "가상손님6"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0034",
+      "body": "[가상] 된장찌개 집밥 느낌 좋아요",
+      "rating": null,
+      "created": "7.18.토",
+      "visited": "7.17.금",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a7",
+       "nickname": "가상손님7"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0035",
+      "body": "[가상] 된장찌개 집밥 느낌 좋아요",
+      "rating": null,
+      "created": "7.17.금",
+      "visited": "7.16.목",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a8",
+       "nickname": "가상손님8"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0036",
+      "body": "[가상] 매장이 깨끗해요",
+      "rating": null,
+      "created": "7.16.목",
+      "visited": "7.16.목",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a0",
+       "nickname": "가상손님0"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0037",
+      "body": "[가상] 웨이팅이 길었어요",
+      "rating": null,
+      "created": "7.15.수",
+      "visited": "7.15.수",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a1",
+       "nickname": "가상손님1"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0038",
+      "body": "[가상] 김치찌개 고기가 줄었어요",
+      "rating": null,
+      "created": "7.14.화",
+      "visited": "7.14.화",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a2",
+       "nickname": "가상손님2"
+      }
+     },
+     {
+      "__typename": "VisitorReview",
+      "id": "fx0039",
+      "body": "[가상] 제육볶음 양이 많아요",
+      "rating": null,
+      "created": "7.12.일",
+      "visited": "7.11.토",
+      "author": {
+       "__typename": "VisitorReviewAuthor",
+       "id": "a3",
+       "nickname": "가상손님3"
+      }
+     }
+    ],
+    "total": 40
+   }
+  }
+ }
+]

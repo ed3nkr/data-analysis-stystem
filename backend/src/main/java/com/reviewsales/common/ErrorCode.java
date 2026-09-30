@@ -39,6 +39,7 @@ public enum ErrorCode {
     INVALID_PLACE_URL(HttpStatus.BAD_REQUEST, "지원하지 않는 플레이스 링크입니다."),
     PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "플레이스를 찾을 수 없습니다."),
     COLLECTOR_UNAVAILABLE(HttpStatus.BAD_GATEWAY, "수집 서버에 연결할 수 없습니다."),
+    NAVER_UNREACHABLE(HttpStatus.BAD_GATEWAY, "네이버에 연결하지 못했습니다."),
     ACCESS_BLOCKED(HttpStatus.SERVICE_UNAVAILABLE, "네이버 접근이 제한되어 수집을 중단했습니다."),
     PAGE_STRUCTURE_CHANGED(HttpStatus.UNPROCESSABLE_ENTITY, "페이지 구조가 바뀌어 읽을 수 없습니다.");
 
