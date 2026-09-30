@@ -115,3 +115,30 @@ def test_place_home_from_og_meta():
 def test_place_home_not_found():
     assert parser.parse_place_home('<meta property="og:title" content="네이버 지도">', "99") is None
     assert parser.parse_place_home("<html></html>", "99") is None
+
+
+def test_real_naver_rate_limit_page_detected_without_status():
+    """2026-09-30 클라우드 IP 로 접속했을 때 받은 실제 제한 페이지 (IP 가림)."""
+    from pathlib import Path
+    html = (Path(__file__).parent / "fixtures" / "naver_rate_limited.html").read_text(encoding="utf-8")
+    assert parser.detect_block("https://m.place.naver.com/restaurant/1/home", None, html) is not None
+    assert parser.detect_block("https://m.place.naver.com/restaurant/1/home", 429, html) is not None
+
+
+def test_apollo_followed_by_other_assignments():
+    """실제 페이지처럼 __APOLLO_STATE__ 뒤에 다른 window.__X__ 할당이 같은 스크립트에 이어지는 경우."""
+    html = ('<script>window.__APOLLO_STATE__ = {"VisitorReview:1": {"id": "1", "body": "a};b", "created": "9.20.일"}};'
+            'window.__PLACE_STATE__ = {"x": 1};</script>')
+    state = parser.extract_apollo_state(html)
+    assert list(state) == ["VisitorReview:1"]
+    assert parser.parse_apollo_reviews(state, TODAY)[0].content == "a};b"
+
+
+def test_real_place_not_found_page():
+    """존재하지 않는 placeId 로 받은 실제 페이지의 구조 (placeDetail = null) 를 줄인 fixture."""
+    from pathlib import Path
+    html = (Path(__file__).parent / "fixtures" / "naver_place_not_found.html").read_text(encoding="utf-8")
+    state = parser.extract_apollo_state(html)
+    assert parser.parse_place_home(html, "11591410") is None
+    assert parser.place_detail_is_null(state, "11591410")
+    assert not parser.place_detail_is_null(state, "999")

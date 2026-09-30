@@ -61,6 +61,8 @@ def _with_scheme(url: str) -> str:
 _BLOCK_MARKERS = [
     "자동입력 방지", "자동 입력 방지", "보안문자", "captcha", "비정상적인 접근", "비정상적인 요청",
     "일시적으로 제한", "접근이 제한", "too many requests", "로그인이 필요",
+    # 실제 네이버 플레이스 제한 페이지 문구 (tests/fixtures/naver_rate_limited.html)
+    "서비스 이용이 제한", "과도한 접근 요청",
 ]
 _LOGIN_HOSTS = ("nid.naver.com",)
 
@@ -179,17 +181,30 @@ def parse_graphql_reviews(payload, today: date) -> list[RawReview] | None:
     return reviews if found else None
 
 
-_APOLLO_RE = re.compile(r"window\.__APOLLO_STATE__\s*=\s*(\{.*?\});\s*(?:window\.|</script>)", re.S)
+_APOLLO_MARK = "window.__APOLLO_STATE__"
 
 
 def extract_apollo_state(html: str) -> dict | None:
-    m = _APOLLO_RE.search(html)
-    if not m:
+    """window.__APOLLO_STATE__ = {...} 의 JSON 을 읽는다.
+    실제 페이지는 같은 스크립트 안에 __PLACE_STATE__ 등 다른 할당이 이어지므로 정규식 대신 JSON 디코더로 끝을 찾는다."""
+    i = html.find(_APOLLO_MARK)
+    if i < 0:
+        return None
+    start = html.find("{", i + len(_APOLLO_MARK))
+    if start < 0:
         return None
     try:
-        return json.loads(m.group(1))
+        state, _ = json.JSONDecoder().raw_decode(html, start)
     except json.JSONDecodeError:
         return None
+    return state if isinstance(state, dict) else None
+
+
+def place_detail_is_null(state: dict | None, place_id: str) -> bool:
+    """존재하지 않는 placeId 면 실제 페이지 ROOT_QUERY 에 'placeDetail({"input":{...,"id":"<placeId>",...}})': null 이 있다."""
+    root = (state or {}).get("ROOT_QUERY") or {}
+    needle = f'"id":"{place_id}"'
+    return any(key.startswith("placeDetail(") and needle in key and value is None for key, value in root.items())
 
 
 def parse_apollo_reviews(state: dict | None, today: date) -> list[RawReview]:

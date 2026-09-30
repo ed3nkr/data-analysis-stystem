@@ -137,7 +137,12 @@ collector (내부): `POST /internal/v1/places/resolve`, `POST /internal/v1/revie
 네이버 플레이스는 클래스명이 난독화되어 있고 자주 바뀐다. 파싱 코드는 전부 `collector/app/parser.py` 에 있으며,
 리뷰는 ① 더보기 시 호출되는 GraphQL 응답(`visitorReviews.items`) → ② 첫 화면의 `window.__APOLLO_STATE__` → ③ DOM 셀렉터 순으로 읽는다.
 
-**개발 환경에서 네이버 접속이 차단되어 실제 페이지로 셀렉터를 확인하지 못했다.** 발표 전에 다음으로 확인해야 한다:
+**클라우드 개발 환경에서 확인한 것 (2026-09-30)**
+- 클라우드 서버 IP 로는 네이버가 첫 요청부터 `429 "과도한 접근 요청으로 서비스 이용이 제한되었습니다"` 또는
+  지도 검색의 캡차(`ncaptcha`)로 응답했다 → 수집기는 이를 `ACCESS_BLOCKED` 로 감지해 즉시 중단한다 (실제 제한 페이지를 테스트 fixture 로 보관).
+- 존재하지 않는 placeId 의 실제 페이지는 `__APOLLO_STATE__.ROOT_QUERY["placeDetail({...\"id\":\"<id>\"...})"] = null` 이다 → `PLACE_NOT_FOUND`.
+- `__APOLLO_STATE__` 뒤에 `__PLACE_STATE__` 등 다른 할당이 이어지므로 JSON 디코더로 읽도록 수정했다.
+- **실제 매장의 리뷰 페이지 구조는 아직 확인하지 못했다.** 클라우드 IP 는 제한되므로 **본인 PC(가정/학교 네트워크)** 에서 확인해야 한다:
 ```bash
 cd collector && source .venv/bin/activate
 python tools/dump_page.py <실제 placeId> --more 1

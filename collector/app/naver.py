@@ -313,6 +313,8 @@ async def resolve_place(settings: Settings, place_url: str) -> parser.PlaceInfo:
         if resp.status_code == 404:
             raise PlaceNotFound("플레이스를 찾을 수 없습니다.")
         info = parser.parse_place_home(resp.text, place_id)
+        if info is None and parser.place_detail_is_null(parser.extract_apollo_state(resp.text), place_id):
+            raise PlaceNotFound("플레이스를 찾을 수 없습니다.")
 
     if info is None:
         # 서버 렌더링 HTML 에 정보가 없으면 브라우저로 한 번 더 연다
