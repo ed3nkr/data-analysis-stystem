@@ -1,0 +1,154 @@
+### 4주차 시연용 요청 모음 (VS Code "REST Client" 확장 기준. 위에서부터 차례로 Send Request)
+### 터미널에서 한 번에 돌리려면 ./demo.sh
+
+@base = http://localhost:8080/api/v1
+@placeUrl = https://m.place.naver.com/restaurant/1234567890/home
+
+### 1. 개발용 로그인 (local 프로필 전용)
+# @name login
+POST {{base}}/auth/dev-login
+Content-Type: application/json
+
+{"email": "owner@example.com"}
+
+###
+@token = {{login.response.body.data.accessToken}}
+
+### 1-1. 내 정보
+GET {{base}}/me
+Authorization: Bearer {{token}}
+
+### 2. 매장 등록
+# @name store
+POST {{base}}/stores
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"name": "시연 한식당", "category": "KOREAN"}
+
+###
+@storeId = {{store.response.body.data.storeId}}
+
+### 3. 메뉴 등록 (반복해서 여러 개 등록)
+POST {{base}}/stores/{{storeId}}/menus
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"posName": "김치찌개(1인)", "aliases": ["김치 찌개"]}
+
+###
+POST {{base}}/stores/{{storeId}}/menus
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"posName": "아메리카노(ICE)", "aliases": ["아아"]}
+
+###
+POST {{base}}/stores/{{storeId}}/menus
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"posName": "제육볶음"}
+
+### 3-1. 메뉴 목록
+GET {{base}}/stores/{{storeId}}/menus
+Authorization: Bearer {{token}}
+
+### 4. 매출 CSV 업로드
+# @name upload
+POST {{base}}/stores/{{storeId}}/sales/uploads
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=BOUNDARY
+
+--BOUNDARY
+Content-Disposition: form-data; name="file"; filename="sales_sample.csv"
+Content-Type: text/csv
+
+< ./samples/sales_sample.csv
+--BOUNDARY--
+
+###
+@uploadId = {{upload.response.body.data.uploadId}}
+
+### 4-1. 같은 기간 다시 업로드 (replace=true 면 교체)
+POST {{base}}/stores/{{storeId}}/sales/uploads
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=BOUNDARY
+
+--BOUNDARY
+Content-Disposition: form-data; name="replace"
+
+true
+--BOUNDARY
+Content-Disposition: form-data; name="file"; filename="sales_sample.csv"
+Content-Type: text/csv
+
+< ./samples/sales_sample.csv
+--BOUNDARY--
+
+### 4-2. 업로드 이력 / 오류 행
+GET {{base}}/stores/{{storeId}}/sales/uploads
+Authorization: Bearer {{token}}
+
+###
+GET {{base}}/stores/{{storeId}}/sales/uploads/{{uploadId}}/errors
+Authorization: Bearer {{token}}
+
+### 5. 플레이스 링크 미리보기
+# @name preview
+POST {{base}}/stores/{{storeId}}/place/preview
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"placeUrl": "{{placeUrl}}"}
+
+### 5-1. 플레이스 연결
+PUT {{base}}/stores/{{storeId}}/place
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"placeId": "{{preview.response.body.data.placeId}}"}
+
+### 6. 리뷰 수집 요청 (202)
+# @name collect
+POST {{base}}/stores/{{storeId}}/review-collections
+Authorization: Bearer {{token}}
+
+### 6-1. 작업 상태 (COMPLETED/FAILED 가 될 때까지 다시 보내기)
+GET {{base}}/jobs/{{collect.response.body.data.jobId}}
+Authorization: Bearer {{token}}
+
+### 6-2. 작업 이력
+GET {{base}}/stores/{{storeId}}/jobs?type=REVIEW_COLLECT&page=0&size=10
+Authorization: Bearer {{token}}
+
+### 7. (대체 수단) 리뷰 파일 등록
+POST {{base}}/stores/{{storeId}}/reviews/uploads
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=BOUNDARY
+
+--BOUNDARY
+Content-Disposition: form-data; name="file"; filename="reviews_sample.csv"
+Content-Type: text/csv
+
+< ./samples/reviews_sample.csv
+--BOUNDARY--
+
+### 8. 리뷰 원문 목록
+GET {{base}}/stores/{{storeId}}/reviews?from=2026-08-01&to=2026-09-30&page=0&size=20
+Authorization: Bearer {{token}}
+
+### 9. 매출 요약 (일별)
+GET {{base}}/stores/{{storeId}}/sales/summary?from=2026-08-01&to=2026-08-31&groupBy=DAY
+Authorization: Bearer {{token}}
+
+### 10. 매출 요약 (메뉴별)
+GET {{base}}/stores/{{storeId}}/sales/summary?from=2026-08-01&to=2026-08-31&groupBy=MENU
+Authorization: Bearer {{token}}
+
+### 11. 매장 상세
+GET {{base}}/stores/{{storeId}}
+Authorization: Bearer {{token}}
+
+### 12. 로그아웃 (리프레시 쿠키 삭제)
+POST {{base}}/auth/logout
