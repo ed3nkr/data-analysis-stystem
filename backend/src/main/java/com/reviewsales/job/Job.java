@@ -6,6 +6,10 @@ import java.time.OffsetDateTime;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,6 +22,9 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "job")
 public class Job {
+
+    private static final ObjectMapper JSON = new ObjectMapper().findAndRegisterModules()
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,7 +59,7 @@ public class Job {
     /** 업로드: [{rowNumber, reason, rawLine}], 수집 실패: {code, message} */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "error_detail", columnDefinition = "jsonb")
-    private Object errorDetail;
+    private JsonNode errorDetail;
 
     @Column(name = "requested_at", nullable = false, updatable = false)
     private OffsetDateTime requestedAt;
@@ -78,14 +85,20 @@ public class Job {
         this.status = JobStatus.COMPLETED;
         this.processedCount = processedCount;
         this.errorCount = errorCount;
-        this.errorDetail = errorDetail;
+        this.errorDetail = errorDetail == null ? null : JSON.valueToTree(errorDetail);
         this.finishedAt = OffsetDateTime.now();
     }
 
     public void fail(Object errorDetail) {
         this.status = JobStatus.FAILED;
-        this.errorDetail = errorDetail;
+        this.errorDetail = errorDetail == null ? null : JSON.valueToTree(errorDetail);
         this.finishedAt = OffsetDateTime.now();
+    }
+
+    /** 유효한 행이 하나도 없어 실패한 업로드: 오류 행 목록을 남긴다. */
+    public void failWithRows(int errorCount, Object errorDetail) {
+        this.errorCount = errorCount;
+        fail(errorDetail);
     }
 
     public void setFilePath(String filePath) {
@@ -137,7 +150,7 @@ public class Job {
         return errorCount;
     }
 
-    public Object getErrorDetail() {
+    public JsonNode getErrorDetail() {
         return errorDetail;
     }
 
