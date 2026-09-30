@@ -1,0 +1,23 @@
+# build
+backend/build/
+backend/.gradle/
+backend/bin/
+backend/out/
+*.class
+# data (uploaded files)
+data/
+backend/data/
+# env / secrets
+.env
+*.local.env
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+# ide
+.idea/
+*.iml
+.vscode/
+.DS_Store

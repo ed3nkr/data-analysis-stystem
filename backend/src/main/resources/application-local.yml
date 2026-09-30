@@ -1,0 +1,4 @@
+# 로컬 개발/시연용 프로필: dev-login 활성화
+logging:
+  level:
+    com.reviewsales: DEBUG
