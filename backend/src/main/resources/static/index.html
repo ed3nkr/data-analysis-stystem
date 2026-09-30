@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>리뷰·매출 분석 프로토타입</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">리뷰·매출 분석 <span class="tag">프로토타입 · 4주차</span></div>
+  <div id="authArea" class="auth"></div>
+</header>
+
+<!-- 로그인 화면 -->
+<main id="loginView" class="login hidden">
+  <section class="card login-card">
+    <h1>사장님 로그인</h1>
+    <p class="muted">매출 데이터와 네이버 플레이스 리뷰를 함께 봅니다.</p>
+    <form id="devLoginForm" class="stack">
+      <label>이메일 (개발용 로그인, local 프로필 전용)
+        <input type="email" name="email" required placeholder="owner@example.com" value="owner@example.com">
+      </label>
+      <button class="primary" type="submit">개발용 로그인</button>
+    </form>
+    <div id="oauthButtons" class="oauth"></div>
+  </section>
+</main>
+
+<!-- 메인 화면 -->
+<main id="appView" class="app hidden">
+  <aside class="sidebar card">
+    <h2>내 매장</h2>
+    <ul id="storeList" class="store-list"></ul>
+    <form id="storeForm" class="stack small">
+      <input name="name" required maxlength="100" placeholder="매장 이름">
+      <select name="category">
+        <option value="KOREAN">한식</option><option value="CHINESE">중식</option>
+        <option value="JAPANESE">일식</option><option value="WESTERN">양식</option>
+        <option value="CAFE">카페</option><option value="PUB">주점</option><option value="ETC">기타</option>
+      </select>
+      <button type="submit">+ 매장 등록</button>
+    </form>
+  </aside>
+
+  <section class="content">
+    <div id="noStore" class="card empty">왼쪽에서 매장을 등록하거나 선택하세요.</div>
+
+    <div id="storeView" class="hidden">
+      <div class="store-head">
+        <div>
+          <h1 id="storeName"></h1>
+          <div id="storeMeta" class="muted"></div>
+        </div>
+      </div>
+      <div class="kpis" id="kpis"></div>
+
+      <nav class="tabs" role="tablist">
+        <button role="tab" data-tab="dashboard" class="active">대시보드</button>
+        <button role="tab" data-tab="sales">매출 업로드</button>
+        <button role="tab" data-tab="reviews">리뷰</button>
+        <button role="tab" data-tab="menus">메뉴</button>
+        <button role="tab" data-tab="place">플레이스 연결</button>
+        <button role="tab" data-tab="jobs">작업 이력</button>
+      </nav>
+
+      <!-- 대시보드 -->
+      <section class="tab" data-panel="dashboard">
+        <div class="card">
+          <div class="filters">
+            <label>시작 <input type="date" id="dashFrom"></label>
+            <label>끝 <input type="date" id="dashTo"></label>
+            <div class="presets">
+              <button data-preset="all">전체</button>
+              <button data-preset="last30">최근 30일</button>
+              <button data-preset="aug">2026년 8월</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>일별 매출액</h3><button class="link" data-toggle-table="dayTable">표로 보기</button></div>
+          <div id="dayChart" class="chart"></div>
+          <div id="dayTable" class="hidden table-wrap"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>메뉴별 매출액</h3><button class="link" data-toggle-table="menuTable">표로 보기</button></div>
+          <div id="menuChart" class="chart"></div>
+          <div id="menuTable" class="hidden table-wrap"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>같은 기간 리뷰</h3><span class="muted small">분석(부정 유형·신뢰도)은 5주차 이후</span></div>
+          <div id="dashReviews"></div>
+        </div>
+      </section>
+
+      <!-- 매출 업로드 -->
+      <section class="tab hidden" data-panel="sales">
+        <div class="card">
+          <h3>매출 CSV 업로드</h3>
+          <p class="muted small">기본 열: 판매일시, 상품명, 수량, 결제금액 · UTF-8 / EUC-KR · 최대 10MB</p>
+          <form id="salesForm" class="stack">
+            <input type="file" name="file" accept=".csv,text/csv" required>
+            <details>
+              <summary>열 이름이 다르면 (선택)</summary>
+              <div class="grid4">
+                <label>판매일시 열 <input name="soldAt" placeholder="판매일시"></label>
+                <label>상품명 열 <input name="menuName" placeholder="상품명"></label>
+                <label>수량 열 <input name="quantity" placeholder="수량"></label>
+                <label>결제금액 열 <input name="amount" placeholder="결제금액"></label>
+              </div>
+            </details>
+            <label class="check"><input type="checkbox" name="replace"> 기간이 겹치면 기존 매출을 교체 (replace)</label>
+            <button class="primary" type="submit">업로드</button>
+          </form>
+          <div id="salesResult"></div>
+        </div>
+        <div class="card">
+          <h3>업로드 이력</h3>
+          <div id="uploadHistory"></div>
+        </div>
+      </section>
+
+      <!-- 리뷰 -->
+      <section class="tab hidden" data-panel="reviews">
+        <div class="two-col">
+          <div class="card">
+            <h3>네이버 플레이스 리뷰 수집</h3>
+            <p class="muted small">공개 방문자 리뷰만 · 요청 간 2초 · 매장당 1시간에 1회</p>
+            <button class="primary" id="collectBtn">리뷰 수집 시작</button>
+            <div id="collectStatus"></div>
+          </div>
+          <div class="card">
+            <h3>리뷰 파일 등록 <span class="muted small">(수집이 안 될 때)</span></h3>
+            <p class="muted small">열: writtenAt, content, visitedAt, rating, author</p>
+            <form id="reviewForm" class="stack">
+              <input type="file" name="file" accept=".csv,text/csv" required>
+              <button type="submit">등록</button>
+            </form>
+            <div id="reviewUploadResult"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="filters">
+            <label>작성일 시작 <input type="date" id="revFrom"></label>
+            <label>끝 <input type="date" id="revTo"></label>
+            <button id="revSearch">조회</button>
+          </div>
+          <div id="reviewList"></div>
+          <div id="reviewPager" class="pager"></div>
+        </div>
+      </section>
+
+      <!-- 메뉴 -->
+      <section class="tab hidden" data-panel="menus">
+        <div class="card">
+          <h3>메뉴 등록</h3>
+          <p class="muted small">정규화 이름은 서버가 만듭니다: 괄호 옵션·공백 제거, 영문 소문자 (예: 아메리카노(ICE) → 아메리카노)</p>
+          <form id="menuForm" class="row">
+            <input name="posName" required placeholder="POS 메뉴명 예) 김치찌개(1인)">
+            <input name="aliases" placeholder="별칭 (쉼표로 구분) 예) 김찌, 김치 찌개">
+            <button class="primary" type="submit">추가</button>
+          </form>
+        </div>
+        <div class="card"><div id="menuList"></div></div>
+      </section>
+
+      <!-- 플레이스 -->
+      <section class="tab hidden" data-panel="place">
+        <div class="card">
+          <h3>네이버 플레이스 연결</h3>
+          <div id="placeCurrent" class="muted"></div>
+          <form id="placeForm" class="row">
+            <input name="placeUrl" required placeholder="https://m.place.naver.com/restaurant/1234567890/home 또는 naver.me 링크">
+            <button type="submit">미리보기</button>
+          </form>
+          <div id="placePreview"></div>
+        </div>
+      </section>
+
+      <!-- 작업 이력 -->
+      <section class="tab hidden" data-panel="jobs">
+        <div class="card">
+          <div class="filters">
+            <select id="jobType">
+              <option value="">전체 유형</option>
+              <option value="SALES_UPLOAD">매출 업로드</option>
+              <option value="REVIEW_COLLECT">리뷰 수집</option>
+              <option value="REVIEW_UPLOAD">리뷰 파일</option>
+            </select>
+          </div>
+          <div id="jobList"></div>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast hidden" role="status"></div>
+<div id="tooltip" class="tooltip hidden"></div>
+<script src="/app.js"></script>
+</body>
+</html>

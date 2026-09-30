@@ -71,6 +71,26 @@ uvicorn app.main:app --port 8000     # 헬스 체크: GET http://localhost:8000/
 
 ## 3. 시연 순서 (4주차 발표)
 
+### 3-0. 프로토타입 웹 (권장)
+backend 를 켜면 **http://localhost:8080/** 에서 바로 쓸 수 있는 웹 화면이 함께 뜬다 (별도 프론트 서버·빌드 없음, 외부 라이브러리 없음 → 오프라인에서도 동작).
+`backend/src/main/resources/static/` 의 `index.html`, `app.css`, `app.js` 세 파일이 전부이며 backend API 만 호출한다.
+
+| 탭 | 하는 일 |
+|---|---|
+| 로그인 | 개발용 로그인(local), 카카오·구글 키가 있으면 버튼 표시 (`GET /api/v1/auth/providers`) |
+| 대시보드 | 기간 선택 → 매출액·수량·리뷰 수 KPI, 일별 매출 추이(마우스 올리면 값), 메뉴별 매출(미등록 메뉴는 점선), 같은 기간 리뷰 |
+| 매출 업로드 | CSV 업로드, 열 매핑, replace, 결과·오류 행 표, 미등록 메뉴를 바로 “+ 등록”, 업로드 이력 |
+| 리뷰 | 네이버 수집 시작 → 진행 상태 자동 갱신, 리뷰 파일 등록, 리뷰 목록(기간·페이지) |
+| 메뉴 | 등록(정규화 이름 표시), 별칭 수정, 삭제 |
+| 플레이스 연결 | 링크 미리보기 → 연결 |
+| 작업 이력 | 모든 작업의 상태·처리 건수·실패 사유 |
+
+추천 시연 흐름: 로그인 → 매장 등록 → 매출 업로드(`samples/sales_sample.csv`) → 미등록 메뉴 “+ 등록” → replace 로 재업로드
+→ 플레이스 연결 → 리뷰 수집(또는 `samples/reviews_sample.csv` 파일 등록) → 대시보드에서 “2026년 8월”.
+OAuth 로그인 후에는 `FRONTEND_BASE_URL`(기본 http://localhost:8080)`/login/success` 로 돌아와 이 화면으로 들어간다.
+
+### 3-1. 스크립트로 시연
+
 1. `docker compose up -d` → backend `./gradlew bootRun` → collector `uvicorn ...`
 2. `./demo.sh` (또는 VS Code REST Client 로 `demo.http` 를 위에서부터 실행)
    1. 개발용 로그인 → 2. 매장 등록 → 3. 메뉴 등록 → 4. 매출 CSV 업로드 (9,140행 성공 / 오류 6행, 미등록 메뉴 후보 `계절한정 냉면`)

@@ -1,7 +1,12 @@
 package com.reviewsales.auth;
 
+import java.util.Map;
+
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.reviewsales.common.ApiResponse;
 import com.reviewsales.common.BusinessException;
 import com.reviewsales.common.ErrorCode;
+import com.reviewsales.config.AppProperties;
 import com.reviewsales.owner.OwnerRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,11 +29,25 @@ public class AuthController {
     private final JwtProvider jwtProvider;
     private final TokenIssuer tokenIssuer;
     private final OwnerRepository ownerRepository;
+    private final AppProperties props;
+    private final Environment env;
 
-    public AuthController(JwtProvider jwtProvider, TokenIssuer tokenIssuer, OwnerRepository ownerRepository) {
+    public AuthController(JwtProvider jwtProvider, TokenIssuer tokenIssuer, OwnerRepository ownerRepository,
+                          AppProperties props, Environment env) {
         this.jwtProvider = jwtProvider;
         this.tokenIssuer = tokenIssuer;
         this.ownerRepository = ownerRepository;
+        this.props = props;
+        this.env = env;
+    }
+
+    @Operation(summary = "사용 가능한 로그인 방식 (프론트에서 버튼 표시용)")
+    @GetMapping("/providers")
+    public ApiResponse<Map<String, Boolean>> providers() {
+        return ApiResponse.ok(Map.of(
+                "dev", env.acceptsProfiles(Profiles.of("local")),
+                "kakao", props.oauth().kakao() != null && props.oauth().kakao().enabled(),
+                "google", props.oauth().google() != null && props.oauth().google().enabled()));
     }
 
     @Operation(summary = "액세스 토큰 재발급 (리프레시 쿠키 사용)")
